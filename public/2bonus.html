@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title>React Fast!</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="bubbles.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Hannah Chan, 9-Sodium, SY 2025-2026</h1>
+        <h2 style="text-align: center;">Type the letter!</h2><br>
+    <div class="box">
+        <label>Score:</label>
+        <p id="score" style="display: inline;">0</p>
+        <br><br>
+
+        <p id="letter" style="display: inline;"></p>
+        <p id="message"></p>
+    </div>
+
+    <img src="game bubbles.jpg" style="display: block; margin: 0 auto; margin-top: 20px; margin-bottom: 10px; width: 180px; height: auto; border-radius: 10px;">
+<footer>
+    <p class="copyright">&copy; 2025 Hannah Chan. All rights reserved.</p>
+</footer>
+
+</body>
+
+<script>
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let score = 0;
+
+    function getRandomLetter() {
+        const randomIndex = Math.floor(Math.random() * letters.length);
+        return letters[randomIndex];
+    }
+
+    function updateLetter() {
+        const letterElement = document.getElementById("letter");
+        letterElement.textContent = getRandomLetter();
+    }
+
+    document.addEventListener("keydown", (event) => {
+        const currentLetter = document.getElementById('letter').textContent;
+        if (event.key.toUpperCase() === currentLetter) {
+            score++;
+    
+            document.getElementById('message').textContent = " ✅ Correct!";
+            document.getElementById('score').textContent = score;
+        
+            updateLetter();
+        } else {
+            document.getElementById('message').textContent = " ❌ Try Again!";
+        }
+    });
+    updateLetter();
+</script>
+</html>
