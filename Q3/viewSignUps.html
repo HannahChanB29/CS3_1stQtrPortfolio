@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Centralized Club Application 📝</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-color: #f0f8ff;
+                font-family: 'Montserrat',sans-serif;
+            }
+
+            label {
+                display: block;
+                width: 200px;
+                margin-bottom: 10px;   
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .filter {
+                display: flex;
+                align-items: left;
+            }
+
+            #clubfiltered {
+                width: 200px;
+                padding: 5px;
+                margin-bottom: 10px;
+                border: 1px solid navy;
+                border-radius: 5px;
+                margin-left: -55px;
+            }
+
+            .button {
+                text-align: center;
+            }
+
+            button {
+                padding: 10px 20px;
+                margin-top: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: navy;
+                color: white;
+                cursor: pointer;
+            }
+
+            table {
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            table th, table td {
+                border: 1px solid navy;
+                padding: 10px;
+                text-align: left;
+            }
+
+            table th {
+                background-color: navy;
+                color: white;
+            }
+        </style>
+
+    <script>
+
+        let signUps = [];
+
+        function displayData() {
+            let signUps = JSON.parse(localStorage.getItem("signUps")) || [];
+    
+            if (signUps.length === 0) {
+                document.getElementById("displayArea").innerHTML = "<p class='message'>No sign-ups found.</p>";
+                document.getElementById("total-signups").innerText = "Total Sign-Ups: 0";
+                return;
+            } 
+
+            filterClubsByClub("ALL");
+        }
+
+
+    function filterClubsByClub(clubfiltered) {
+
+        let filtered = clubfiltered === "ALL" ? signUps : signUps.filter(s => s.clubfiltered() === clubfiltered());
+        
+        if (filtered.length === 0) {
+            document.getElementById("displayArea").innerHTML = "<p class='message'>No sign-ups found for this club.</p>";
+            document.getElementById("total-signups").innerText = "Total Sign-Ups: 0";
+            return;
+        }
+
+        let tablehtml = `<table>
+            <tr>
+                <th>Club</th>
+                <th>Student ID</th>
+                <th>Full Name</th>
+                <th>Grade</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Status</th>
+            </tr>`;
+
+        filtered.forEach(s => {
+            tablehtml += `<tr>
+                <td>${s.club}</td>
+                <td>${s.studentID}</td>
+                <td>${s.fullName}</td>
+                <td>${s.grade}</td>
+                <td>${s.email}</td>
+                <td>${s.mobile}</td>
+                <td>${s.status}</td>
+            </tr>`;
+        });
+        tablehtml += `</table>`;
+
+        document.getElementById("displayArea").innerHTML = tablehtml;
+        document.getElementById("total-signups").innerText = "Total Sign-Ups: " + filtered.length;
+    }
+
+     function filterClubs() {
+        const clubSelect = document.getElementById("clubfiltered").value;
+            filterClubsByClub(clubSelect);
+     }
+    </script>
+    </head>
+
+    <body onload="displayData()">
+       
+    <h2>List of students who signed up ✍🏼</h2>
+
+    <a class="back-link" href="3ge.html">← Back to Sign-Up Page</a><br><br>
+
+    <div class="filter">
+    
+        <label>Select Your Club:</label>
+    <select id="clubfiltered" onchange="filterClubs()">
+        <option value="" disabled selected>-- select! --</option>
+           <option value="ALL">ALL</option>
+           <option value="Choir">Choir</option>
+           <option value="Math Club">Math Club</option>
+           <option value="Theatre Club">Theatre Club</option>
+           <option value="Art Club">Art Club</option>
+           <option value="Science Club">Science Club</option>
+           <option value="Environment Club">Environment Club</option>
+    </select>
+    </div>
+
+            <p id="total-signups"></p>
+            <div id="displayArea"></div>
+        
+        </body>
+    </html>
