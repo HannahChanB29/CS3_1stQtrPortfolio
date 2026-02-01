@@ -1,1 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Centralized Club Application 📝</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-color: #f0f8ff;
+                font-family: 'Montserrat',sans-serif;
+            }
 
+            fieldset {
+                border: 2px solid lightblue;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 0px;
+                background-color: #e6f7ff;
+            }
+
+            legend {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: navy;
+            }
+
+            label {
+                display: block;
+                width: 200px;
+                margin-bottom: 10px;   
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .button {
+                text-align: center;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            input[type="email"],
+            input[type="date"],
+            select {
+                width: 500px;
+                padding: 5px;
+                margin-bottom: 10px;
+                border: 1px solid navy;
+                border-radius: 5px;
+            }
+
+            input[type="submit"],
+            input[type="reset"],
+            button[type="button"] {
+                padding: 10px 20px;
+                margin-top: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: navy;
+                color: white;
+                cursor: pointer;
+            }
+
+            input[type="submit"]:hover,
+            input[type="reset"]:hover,
+            button[type="button"]:hover {
+                background-color: lightgreen;
+            }
+
+            input:focus, button:focus, select:focus, textarea:focus {
+                padding: 5px;
+                margin-bottom: 10px;
+                border: 1px solid navy;
+                border-radius: 5px;
+                font-family: 'Montserrat', sans-serif;
+                background-color: lightblue;
+            }
+
+            textarea {
+                width: 500px;
+            }
+        </style>
+    </head>
+
+<body>
+
+<script>
+
+    function confirmReset() {
+        return confirm("Are you sure you want to clear the form?");
+    } 
+
+    function confirmSubmit() {
+        return confirm("Are you sure you want to submit the form?");
+    }
+
+    function checkEmpty(field) {
+        if (field.value.trim() === "") {
+            alert("This field cannot be left empty.");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function save(event) {
+        event.preventDefault();
+
+        if (!confirmSubmit()) return;
+        saveData();
+    }
+
+    function saveData() {
+        // collection of form data
+        const formData = {
+            studentId: document.querySelector("[name='studentid']").value,
+            fullName: document.querySelector("[name='fname']").value,
+            birthday: document.querySelector("[name='bday']").value,
+            email: document.querySelector("[name='email']").value,
+            mobile: document.querySelector("[name='no']").value,
+            gradeLevel: document.querySelector("[name='gradelevel']").value,
+            status: document.querySelector("[name='ie']:checked").value,
+            club: document.querySelector("[name='club']").value,
+            reason: document.querySelector("[name='reason']").value
+        };
+        
+        // check if there is already existing data in localStorage
+        let signUps = JSON.parse(localStorage.getItem("formData")) || [];
+    
+        signUps.push(formData);
+        
+        // message alert for successful submission
+        localStorage.setItem("formData", JSON.stringify(signUps));
+        alert("Application Data submitted successfully!");
+
+        document.querySelector("form").reset();
+    }
+
+
+    function viewSignUps() {
+        window.location.href = "viewSignUps.html";
+    }
+</script>
+
+<form onsubmit="save(event)" onreset="confirmReset()">
+<!--Personal-->
+    <fieldset>
+    
+                <legend>Personal Information</legend>
+    
+                 <label for="studentID">Student ID:</label>
+    
+                    <input type="number" name="studentid" id="studentID" required onblur="checkEmpty(this)"><br><br>
+    
+                <label for="fname">Full Name:</label>
+    
+                    <input type="text" id="fname" name="fname" required onblur="checkEmpty(this)"><br><br>
+
+                <label for="bday">Birthday:</label>
+
+                    <input type="date" placeholder="MM/DD/YYYY" id="bday" name="bday" required onblur="checkEmpty(this)"><br><br>
+
+                <label for="email">Email:</label>
+
+                <input type="email" id="email" name="email" required onblur="checkEmpty(this)"><br><br>
+
+ </fieldset><br>
+
+<!--Application-->
+        <fieldset>
+        
+                    <legend>Application Information</legend>
+        
+                     <label for="no">Mobile Phone:</label>
+        
+                        <input type="text" id="no" name="no" required onblur="checkEmpty(this)"><br><br>
+        
+                    <label for="gradelevel">Grade Level:</label>
+                        <select id="gradelevel" name="gradelevel" required onblur="checkEmpty(this)">
+                            <option value="" disabled selected>Select your grade level</option>
+                            <option value="7">7th Grade</option>
+                            <option value="8">8th Grade</option>
+                            <option value="9">9th Grade</option>
+                            <option value="10">10th Grade</option>
+                            <option value="11">11th Grade</option>
+                            <option value="12">12th Grade</option>
+                        </select><br><br>
+                    
+                      <label for="ie">Status</label>
+                      <input type="radio" id="ie" name="ie" value="intern" required onblur="checkEmpty(this)">Intern<br><br>
+                      <input type="radio" name="ie" value="extern" required onblur="checkEmpty(this)">Extern<br><br>
+
+    
+                    <label for="club">Preferred Organization/Club:</label>
+                        <select id="club" name="club" required onblur="checkEmpty(this)">
+                            <option value="" disabled selected>Select!</option>
+                            <option value="choir">Choir</option>
+                            <option value="math">Math Club</option>
+                            <option value="theatre">Theatre Club</option>
+                            <option value="art">Art Club</option>
+                            <option value="science">Science Club</option>
+                            <option value="environment">Environment Club</option>
+                        </select><br><br>
+
+                    <label for="reason">Why do you want to join?</label><br>
+                        <textarea id="reason" name="reason" rows="7" cols="75" required onblur="checkEmpty(this)"></textarea><br><br>   
+        
+                <div class="button">
+                    <input type="submit" value="Submit">
+                    <input type="reset" value="Clear" onclick="return confirmReset()">
+                    <button type="button" onclick="return viewSignUps()">View Sign-Ups</button>
+                </div>
+         </fieldset>
+        </form>
+    </body>
+</html>
