@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Movie Ratings ⭐</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-color: whitesmoke;
+                font-family: 'Montserrat',sans-serif;
+            }
+
+            fieldset {
+                box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin-bottom: 0px;
+                background-color: white;
+                width: 500px;
+            }
+
+            h2 {
+                text-align: center;
+                color: black;
+            }
+
+            label {
+                display: block;
+                width: 200px;
+                margin-bottom: 10px;   
+                font-weight: bold;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .button {
+                text-align: center;
+            }
+
+            /*Stars*/
+            .stars {
+                display: flex;
+                font-size: 25px;
+                gap: 5px;
+                cursor: pointer;
+            }
+
+            .star {
+                color: lightgrey;
+                transition: color 0.1s;
+            }
+
+            .star.active {
+                color: #ffcc00;
+            }
+
+            .stars input[type="radio"] {
+                display: none;
+            }
+
+            /*movie list*/
+
+            .movie-stars {
+                color: #ffcc00;
+            }
+
+            .movie-item {
+                background-color: white;
+                border: 1px solid lightgrey;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            /*button*/
+            button {
+                padding: 12px;
+                width: 100%;
+                margin-top: 10px;
+                border: none;
+                font-weight: bold;
+                border-radius: 5px;
+                background-color: blue;
+                color: white;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: darkblue;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            input[type="email"],
+            input[type="date"] {
+                width: 500px;
+                padding: 5px;
+                margin-bottom: 10px;
+                border: 1px solid grey;
+                border-radius: 5px;
+            }
+
+            input:focus, select:focus, textarea:focus {
+                padding: 5px;
+                margin-bottom: 10px;
+                border: 1px solid lightgrey;
+                border-radius: 5px;
+                font-family: 'Montserrat', sans-serif;
+                background-color: whitesmoke;
+            }
+
+            textarea {
+                width: 500px;
+            }
+        </style>
+    </head>
+    <body>
+
+<form>
+
+    <fieldset>
+
+        <h2>Add a Movie</h2>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year" required><br><br>
+
+        <label for="genre">Genre:</label>
+         <select id="genre" name="genre" required onblur="checkEmpty(this)">
+                            <option value="" disabled selected>Select!</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Action">Action</option>
+                            <option value="Romance">Romance</option>
+                    </select><br><br>
+
+<label>Rating:</label>
+    <div class="container" id="starratings">
+    <div class="stars" style="gap: 0px; justify-content: flex-start;">
+
+         <span class="star" data-value="s1">★</span>
+         <span class="star" data-value="s2">★</span>
+         <span class="star" data-value="s3">★</span>
+         <span class="star" data-value="s4">★</span>
+         <span class="star" data-value="s5">★</span>
+            </div>
+        </div><br><br>
+
+        <button type="button" onclick="add()">Add Movie</button>
+
+        <div class="movieList">
+            <h2>Movie List 🎥</h2>
+            <div id="movieListContainer"></div>
+        </div>
+
+        </fieldset>
+    </form>
+
+    <script>
+        let selectedRating = 0;
+        const stars = document.querySelectorAll('.star');
+        const localStorageKey = 'movies';
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.getAttribute('data-value')[1]);
+                updateStars(); // getting rating value from the stars
+            });
+        });
+
+        // to get the stars in the list the same as the rating value
+        function updateStars() {
+            stars.forEach(star => {
+                if (parseInt(star.getAttribute('data-value')[1]) <= selectedRating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // CRUD 
+        function addMovies() {
+            const stringMovie = localStorage.getItem(localStorageKey);
+
+            if (stringMovie) {
+                return JSON.parse(stringMovie);
+            }
+            else {
+                return [];
+            }
+        }
+
+        function getMovies() {
+            return addMovies();
+        }
+
+        function displayMovies() {
+            const movieList = document.getElementById('movieListContainer');
+            const movies = addMovies();
+
+            movieList.innerHTML = ''; // clearing the list before displaying
+
+            // Looping through the stored movies
+            movies.forEach(movie => {
+
+                // Generating stars based on the rating value
+                let stars = '';
+                for (let i = 0; i < movie.rating; i++) {
+                    stars += '★';
+                }
+
+                // Layout for display
+                const movieItem = document.createElement('div');
+                movieItem.classList.add('movie-item');
+                movieItem.innerHTML = `
+
+                    ${movie.title} (${movie.year}) - Genre: ${movie.genre},
+                    Rating: <span class="movie-stars">${stars}</span>
+                `;
+
+                movieList.appendChild(movieItem); // moves movieItem into the display
+            });
+        }
+
+        // CRUD: Add Data to LocalStorage
+
+        function add() {
+            const titleData = document.getElementById('title').value.trim();
+            const yearData = document.getElementById('year').value.trim();
+            const genreData = document.getElementById('genre').value;
+
+            // Alert if any field is empty
+            if (!titleData || !yearData || !genreData) {
+                alert('Oops! Please fill in all of the fields!');
+                return;
+            }
+
+            // Displaying given the layout
+            const displayMovie = {
+                title: titleData,
+                year: yearData.toString(),
+                genre: genreData,
+                rating: selectedRating
+            };
+
+            const movies = addMovies();
+            movies.push(displayMovie);
+            localStorage.setItem(localStorageKey, JSON.stringify(movies)); // saving new movie --> localStorage
+
+            // Reset
+
+            document.getElementById('title').value = '';
+            document.getElementById('year').value = '';
+            document.getElementById('genre').value = '';
+            selectedRating = 0;
+            updateStars();
+
+            // Display
+            displayMovies();
+        }
+
+        // Display existing movies added when the page loads
+
+        window.onload = displayMovies;
+
+    </script>
+        </body>
+    </html>
