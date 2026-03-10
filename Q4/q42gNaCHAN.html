@@ -245,29 +245,19 @@
                     stars += '★';
                 }
 
-                // Layout for display
+                // Delete Button and exact decimal rating
                 const movieItem = document.createElement('div');
                 movieItem.classList.add('movie-item');
                 movieItem.innerHTML = `
                     <div class="movie-info">
                         ${movie.title} (${movie.year}) - Genre: ${movie.genre},
-                        Rating: <span class="movie-stars">${stars}</span>
-                    </div>
+                        Rating: ${parseFloat(movie.rating).toFixed(1)} <span class="movie-stars">${stars}</span>
+                    </div> 
                     <button class="delete" onclick="deleteMovie(${index})">Delete</button>
                 `;
 
                 movieList.appendChild(movieItem); // moves movieItem into the display
             });
-        }
-
-        // CRUD: Delete Data from LocalStorage
-        function deleteMovie(index) {
-            const movies = addMovies(); 
-
-            alert(`Are you sure you want to delete "${movies[index].title}"?`); // confirmation alert before deletion
-            movies.splice(index, 1); // removing the movie at the specified index
-            localStorage.setItem(localStorageKey, JSON.stringify(movies)); // updating localStorage after deletion
-            displayMovies(); // refreshing the displayed list after deletion
         }
 
         // CRUD: Create and Update Data to LocalStorage
@@ -286,38 +276,59 @@
             const movies = addMovies();
                 // Check if the movie already exists (by title and year)
                 const existingMovieIndex = movies.findIndex(movie => movie.title === titleData && movie.year === yearData);
-                const oldMovie = movies[existingMovieIndex];
 
                 if (existingMovieIndex !== -1) {
+                    const existingMovie = movies[existingMovieIndex]; // Update the existing movie's genre and rating if it already exists
+
+                     // Checking how many times it has been rated to calculate the average rating if the movie already exists
+                    const count = existingMovie.ratingCount ? parseInt(existingMovie.ratingCount) : 1;
+                    const oldRating = existingMovie.rating ? parseInt(existingMovie.rating) : 0;
+
+                    // New Average Rating = (Old Rating * Count + New Rating) / (Count + 1)
+                    const newAverageRating = (oldRating * count + selectedRating) / (count + 1);
+                    
+                    existingMovie.year = yearData.toString();
+                    existingMovie.genre = genreData;
+                    existingMovie.rating = newAverageRating.toString(); // Update the rating to the new average rating
+                    existingMovie.ratingCount = (count + 1).toString(); // Incrementing the rating count for the movie
+                    
                     // Update the existing movie
                     movies[existingMovieIndex] = {
                         title: titleData,
                         year: yearData.toString(),
                         genre: genreData,
-                        rating: selectedRating
+                        rating: selectedRating.toString(),
+                        ratingCount: (count + 1).toString() // Increment ratingCount instead of resetting
                     };
-                } else {
+                }
+
+                 else {
                     // Add new movie
                     movies.push({
                         title: titleData,
                         year: yearData.toString(),
                         genre: genreData,
-                        rating: selectedRating
+                        rating: selectedRating,
+                        ratingCount: 1
                     });
-                }
 
-            // Displaying given the layout
-            const displayMovie = {
-                title: titleData,
-                year: yearData.toString(),
-                genre: genreData,
-                rating: selectedRating
-            };
+                    movies.push(displayMovie);
+                 }
 
-            const movie = addMovies();
-            movie.push(displayMovie);
-            localStorage.setItem(localStorageKey, JSON.stringify(movie)); // saving new movie --> localStorage
-            
+            localStorage.setItem(localStorageKey, JSON.stringify(movies)); // saving new movie --> localStorage
+            resetForm(); // Reset the form after adding/updating a movie
+            displayMovies(); // Display the updated list of movies
+
+             // CRUD: Delete Data from LocalStorage
+        function deleteMovie(index) {
+            const movies = addMovies(); 
+
+            alert(`Are you sure you want to delete "${movies[index].title}"?`); // confirmation alert before deletion
+            movies.splice(index, 1); // removing the movie at the specified index
+            localStorage.setItem(localStorageKey, JSON.stringify(movies)); // updating localStorage after deletion
+            displayMovies(); // refreshing the displayed list after deletion
+        }
+
             // Reset
             function resetForm() {
                 document.getElementById('title').value = '';
