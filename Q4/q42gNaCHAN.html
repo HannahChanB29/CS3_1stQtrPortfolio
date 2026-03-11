@@ -181,7 +181,7 @@
             </div>
         </div><br><br>
 
-        <button type="button" onclick="addUpdateMovie()">Add Movie</button>
+        <button type="button" class="button" onclick="addUpdateMovie()">Add Movie</button>
 
         <div class="movieList">
             <h2>Movie List 🎥</h2>
@@ -253,7 +253,7 @@
                         ${movie.title} (${movie.year}) - Genre: ${movie.genre},
                         Rating: ${parseFloat(movie.rating).toFixed(1)} <span class="movie-stars">${stars}</span>
                     </div> 
-                    <button class="delete" onclick="deleteMovie(${index})">Delete</button>
+                    <button type ="button" class="delete" onclick="deleteMovie(${index})">Delete</button>
                 `;
 
                 movieList.appendChild(movieItem); // moves movieItem into the display
@@ -268,7 +268,7 @@
             const genreData = document.getElementById('genre').value;
 
             // Alert if any field is empty
-            if (!titleData || !yearData || !genreData) {
+            if (!titleData || !yearData || !genreData || selectedRating === 0) {
                 alert('Oops! Please fill in all of the fields and rate!');
                 return;
             }
@@ -301,6 +301,7 @@
                         ratingCount: (count + 1).toString() // Increment ratingCount instead of resetting
                     };
                 }
+        
 
                  else {
                     // Add new movie
@@ -312,22 +313,26 @@
                         ratingCount: 1
                     });
 
-                    movies.push(displayMovie);
                  }
+        
 
             localStorage.setItem(localStorageKey, JSON.stringify(movies)); // saving new movie --> localStorage
             resetForm(); // Reset the form after adding/updating a movie
             displayMovies(); // Display the updated list of movies
+        }
 
              // CRUD: Delete Data from LocalStorage
         function deleteMovie(index) {
-            const movies = addMovies(); 
+            const movies = addMovies();
+            const confirmDelete= confirm(`Are you sure you want to delete "${movies[index].title}"?`);
 
-            alert(`Are you sure you want to delete "${movies[index].title}"?`); // confirmation alert before deletion
-            movies.splice(index, 1); // removing the movie at the specified index
-            localStorage.setItem(localStorageKey, JSON.stringify(movies)); // updating localStorage after deletion
-            displayMovies(); // refreshing the displayed list after deletion
+            if (confirmDelete) {
+                movies.splice(index, 1); // removing the movie at the specified index
+                localStorage.setItem(localStorageKey, JSON.stringify(movies)); // updating localStorage after deletion
+                displayMovies(); // refreshing the displayed list after deletion
+            }
         }
+        
 
             // Reset
             function resetForm() {
@@ -342,7 +347,7 @@
 
             // Display
             displayMovies();
-        }
+        
 
         // Display existing movies added when the page loads (Initialization)
 
